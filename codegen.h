@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "list.h"
 #include "tac.h"
+class FnDecl;
  
 
               // These codes are used to identify the built-in functions
@@ -21,6 +22,8 @@ typedef enum { Alloc, ReadLine, ReadInteger, StringEqual,
 class CodeGenerator {
   private:
     List<Instruction*> *code;
+    int curStackOffset, curGlobalOffset;
+    int insideFn;
 
   public:
            // Here are some class constants to remind you of the offsets
@@ -48,6 +51,10 @@ class CodeGenerator {
          // temp variable. Does not generate any Tac instructions
     Location *GenTempVariable();
 
+    Location *GenLocalVariable(const char *varName);
+    Location *GenGlobalVariable(const char *varName);
+    Location *GenParameter(int index, const char *varName);
+    Location *GenIndirect(Location* base, int offset);
          // Generates Tac instructions to load a constant value. Creates
          // a new temp var to hold the result. The constant 
          // value is passed as an integer, it can be 0 for integer zero,
@@ -159,6 +166,16 @@ class CodeGenerator {
          // but instead just print the untranslated Tac. It may be
          // useful in debugging to first make sure your Tac is correct.
     void DoFinalCodeGen();
+
+    Location *GenNewArray(Location *numElements);
+    Location *GenArrayLen(Location *array);
+    Location *GenNew(const char *vTableLabel, int instanceSize);
+    Location *GenDynamicDispatch(Location *obj, int vtableOffset, List<Location*> *args, bool hasReturnValue);
+    Location *GenSubscript(Location *array, Location *index);
+    Location *GenFunctionCall(const char *fnLabel, List<Location*> *args, bool hasReturnValue);
+    // private helper, not for public user
+    Location *GenMethodCall(Location*rcvr, Location*meth, List<Location*> *args, bool hasReturnValue);
+    void GenHaltWithMessage(const char *msg);
 };
 
 #endif
