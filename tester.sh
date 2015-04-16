@@ -6,9 +6,9 @@ CURRENT_OUTPUT="/tmp/eecs483p4.out"
 function spim_run() {
         if [ -f ${1}.in ]
         then
-                solution/spim -file ${1}.s < ${1}.in > ${1}.out 2> /dev/null
+                solution/spim -keepstats -file ${1}.s < ${1}.in > ${1}.out
         else
-                solution/spim -file ${1}.s > ${1}.out 2> /dev/null
+                solution/spim -keepstats -file ${1}.s > ${1}.out
         fi
 }
 
