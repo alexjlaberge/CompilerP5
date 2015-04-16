@@ -12,6 +12,21 @@
 #include "ast_decl.h"
 #include "errors.h"
   
+void CodeGenerator::livelinessAnalysis()
+{
+
+}
+
+void CodeGenerator::constructInterGraph()
+{
+
+}
+
+void CodeGenerator::color()
+{
+  
+}
+
 CodeGenerator::CodeGenerator()
 {
   code = new List<Instruction*>();

@@ -37,7 +37,12 @@ void Program::Emit() {
     CodeGenerator *cg = new CodeGenerator();
     decls->EmitAll(cg);
     if (ReportError::NumErrors() == 0)
+    {
+    	cg->livelinessAnalysis();
+    	cg->constructInterGraph();
+    	cg->color();
         cg->DoFinalCodeGen();
+    }
 }
 
 StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {

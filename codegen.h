@@ -42,6 +42,10 @@ class CodeGenerator {
     static const int VarSize = 4;
 
     CodeGenerator();
+
+    void livelinessAnalysis();
+    void constructInterGraph();
+    void color();
     
          // Assigns a new unique label name and returns it. Does not
          // generate any Tac instructions (see GenLabel below if needed)
