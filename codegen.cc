@@ -11,6 +11,32 @@
 #include "mips.h"
 #include "ast_decl.h"
 #include "errors.h"
+
+void CodeGenerator::constructCFG()
+{
+  for(int i = 0; i < code->NumElements() - 1; i++)
+  {
+    if(dynamic_cast<IfZ*>(code->Nth(i)))
+    {
+      //Add label location to Instructions neighbors
+    }
+    else if(dynamic_cast<Goto*>(code->Nth(i)))
+    {
+      //Add label location to Instructions neighbors
+      continue;
+    }
+    else if(dynamic_cast<Return*>(code->Nth(i)))
+    {
+      continue;
+    }
+    else if(dynamic_cast<EndFunc*>(code->Nth(i)))
+    {
+      break;
+    }
+    code->Nth(i)->addEdge(code->Nth(i+1));
+    //Add next instruction to Instructions neighbors
+  }
+}
   
 void CodeGenerator::livelinessAnalysis()
 {

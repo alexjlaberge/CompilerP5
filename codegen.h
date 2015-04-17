@@ -43,6 +43,7 @@ class CodeGenerator {
 
     CodeGenerator();
 
+    void constructCFG();
     void livelinessAnalysis();
     void constructInterGraph();
     void color();
