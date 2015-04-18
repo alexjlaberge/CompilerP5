@@ -18,7 +18,8 @@ default: $(PRODUCTS)
 
 # Set up the list of source and object files
 SRCS = ast.cc ast_decl.cc ast_expr.cc ast_stmt.cc ast_type.cc scope.cc \
-	codegen.cc tac.cc mips.cc errors.cc utility.cc libyywrap.cc main.cc
+	codegen.cc graph.cc tac.cc mips.cc errors.cc utility.cc libyywrap.cc \
+	main.cc
 
 # OBJS can deal with either .cc or .c files listed in SRCS
 OBJS = lex.yy.o y.tab.o $(patsubst %.cc, %.o, $(filter %.cc,$(SRCS))) $(patsubst %.c, %.o, $(filter %.c, $(SRCS)))
@@ -91,6 +92,11 @@ depend:
 
 clean:
 	rm -f $(JUNK) y.output $(PRODUCTS)
+
+graph_test.o : graph.o
+graph_test : graph_test.o graph.o
+	$(CXX) -o $@ $^
+	./graph_test
 
 # DO NOT DELETE
 

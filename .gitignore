@@ -4,3 +4,4 @@ dcc
 lex.yy.c
 y.output
 samples/*.out
+graph_test
