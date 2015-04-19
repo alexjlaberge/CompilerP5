@@ -40,6 +40,51 @@ void CodeGenerator::constructCFG()
   
 void CodeGenerator::livelinessAnalysis()
 {
+  Instruction *currInst;
+  bool changed = true;
+  while(changed)
+  {
+    changed = false;
+    for(int i = 0; i < code->NumElements(); i++)
+    {
+      currInst = code->Nth(i);
+      List<Instruction*> edges = currInst->getEdges();
+      List<Location*> outSet;
+      for(int j = 0; j < edges.NumElements(); j++)
+      {
+        Instruction* currEdge = edges.Nth(j);
+        List<Location*> edgeInSet = currEdge->inSet;
+        for(int k = 0; k < edgeInSet.NumElements(); k++)
+        {
+          Location* currElem = edgeInSet.Nth(k);
+          bool foundElem = false;
+          for(int l = 0; l < outSet.NumElements(); l++)
+          {
+            if(outSet.Nth(l) == currElem)
+            {
+              foundElem = true;
+            }
+          }
+          if(!foundElem)
+          {
+            outSet.Append(currElem);
+          }
+        }
+        List<Location*> genSet = currInst->genSet;
+        List<Location*> killSet = currInst->killSet;
+        currInst->outSet = outSet;
+        List<Location*> old_IN = outSet;
+
+      }
+    }
+
+    //old_IN = IN(X);
+    //OUT(X) = Union(IN(Y)) for all successors Y of X
+    //IN(X) = GEN(X) + (OUT(X) - KILL(X))
+
+
+    
+  }
 
 }
 
@@ -52,6 +97,7 @@ void CodeGenerator::color()
 {
   
 }
+
 
 CodeGenerator::CodeGenerator()
 {

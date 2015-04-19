@@ -24,6 +24,7 @@ class CodeGenerator {
     List<Instruction*> *code;
     int curStackOffset, curGlobalOffset;
     int insideFn;
+    List<Instruction*> removedInst;
 
   public:
            // Here are some class constants to remind you of the offsets
@@ -45,6 +46,7 @@ class CodeGenerator {
 
     void constructCFG();
     void livelinessAnalysis();
+    bool hasChanged();
     void constructInterGraph();
     void color();
     

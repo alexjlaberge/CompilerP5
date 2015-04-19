@@ -70,14 +70,28 @@ class Location
 class Instruction {
     protected:
         char printed[128];
-        List<Instruction*> neighbors;
-	  
+        List<Instruction*> edges;
+	  	
     public:
+
+    List<Location*> inSet;
+    List<Location*> outSet;
+    List<Location*> genSet;
+    List<Location*> killSet;
 
     void addEdge(Instruction* a)
     {
-    	neighbors.Append(a);
+    	edges.Append(a);
     }
+    List<Instruction*> getEdges()
+    {
+    	return edges;
+    }
+    int numEdges()
+    {
+    	return edges.NumElements();
+    }
+    bool dead;
 	virtual void Print();
 	virtual void EmitSpecific(Mips *mips) = 0;
 	virtual void Emit(Mips *mips);
