@@ -3,7 +3,7 @@
 ##
 
 
-.PHONY: clean strip
+.PHONY: clean strip test
 
 # C++11 support on CAEN machines
 PATH := /usr/um/gcc-4.7.0/bin:$(PATH) 
@@ -96,7 +96,9 @@ clean:
 graph_test.o : graph.o
 graph_test : graph_test.o graph.o
 	$(CXX) -o $@ $^
-	./graph_test
+
+test : graph_test
+	for t in $^; do ./$${t} || exit 1; done;
 
 # DO NOT DELETE
 
