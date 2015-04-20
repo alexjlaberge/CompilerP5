@@ -124,7 +124,7 @@ class Instruction {
 
 
 
-class LoadConstant: public Instruction {
+class LoadConstant: public Instruction { //Done
     Location *dst;
     int val;
   public:
@@ -132,7 +132,7 @@ class LoadConstant: public Instruction {
     void EmitSpecific(Mips *mips);
 };
 
-class LoadStringConstant: public Instruction {
+class LoadStringConstant: public Instruction { //Done
     Location *dst;
     char *str;
   public:
@@ -140,7 +140,7 @@ class LoadStringConstant: public Instruction {
     void EmitSpecific(Mips *mips);
 };
     
-class LoadLabel: public Instruction {
+class LoadLabel: public Instruction { //Done
     Location *dst;
     const char *label;
   public:
@@ -148,14 +148,14 @@ class LoadLabel: public Instruction {
     void EmitSpecific(Mips *mips);
 };
 
-class Assign: public Instruction {
+class Assign: public Instruction { //Done
     Location *dst, *src;
   public:
     Assign(Location *dst, Location *src);
     void EmitSpecific(Mips *mips);
 };
 
-class Load: public Instruction {
+class Load: public Instruction { //Done
     Location *dst, *src;
     int offset;
   public:
@@ -163,7 +163,7 @@ class Load: public Instruction {
     void EmitSpecific(Mips *mips);
 };
 
-class Store: public Instruction {
+class Store: public Instruction { //Done
     Location *dst, *src;
     int offset;
   public:
@@ -171,7 +171,7 @@ class Store: public Instruction {
     void EmitSpecific(Mips *mips);
 };
 
-class BinaryOp: public Instruction {
+class BinaryOp: public Instruction { //Done
 
   public:
     static const char * const opName[Mips::NumOps];

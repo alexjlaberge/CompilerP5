@@ -28,6 +28,7 @@ LoadConstant::LoadConstant(Location *d, int v)
   : dst(d), val(v) {
   Assert(dst != NULL);
   sprintf(printed, "%s = %d", dst->GetName(), val);
+  killSet.Append(dst);
 }
 void LoadConstant::EmitSpecific(Mips *mips) {
   mips->EmitLoadConstant(dst, val);
@@ -41,6 +42,7 @@ LoadStringConstant::LoadStringConstant(Location *d, const char *s)
   sprintf(str, "%s%s%s", quote, s, quote);
   quote = (strlen(str) > 50) ? "...\"" : "";
   sprintf(printed, "%s = %.50s%s", dst->GetName(), str, quote);
+  killSet.Append(dst);
 }
 void LoadStringConstant::EmitSpecific(Mips *mips) {
   mips->EmitLoadStringConstant(dst, str);
@@ -52,6 +54,7 @@ LoadLabel::LoadLabel(Location *d, const char *l)
   : dst(d), label(strdup(l)) {
   Assert(dst != NULL && label != NULL);
   sprintf(printed, "%s = %s", dst->GetName(), label);
+  killSet.Append(dst);
 }
 void LoadLabel::EmitSpecific(Mips *mips) {
   mips->EmitLoadLabel(dst, label);
@@ -63,6 +66,8 @@ Assign::Assign(Location *d, Location *s)
   : dst(d), src(s) {
   Assert(dst != NULL && src != NULL);
   sprintf(printed, "%s = %s", dst->GetName(), src->GetName());
+  killSet.Append(dst);
+  genSet.Append(src);
 }
 void Assign::EmitSpecific(Mips *mips) {
   mips->EmitCopy(dst, src);
@@ -77,6 +82,9 @@ Load::Load(Location *d, Location *s, int off)
     sprintf(printed, "%s = *(%s + %d)", dst->GetName(), src->GetName(), offset);
   else
     sprintf(printed, "%s = *(%s)", dst->GetName(), src->GetName());
+	
+  killSet.Append(dst);
+  genSet.Append(src);
 }
 void Load::EmitSpecific(Mips *mips) {
   mips->EmitLoad(dst, src, offset);
@@ -91,6 +99,8 @@ Store::Store(Location *d, Location *s, int off)
     sprintf(printed, "*(%s + %d) = %s", dst->GetName(), offset, src->GetName());
   else
     sprintf(printed, "*(%s) = %s", dst->GetName(), src->GetName());
+  killSet.Append(dst);
+  genSet.Append(src);
 }
 void Store::EmitSpecific(Mips *mips) {
   mips->EmitStore(dst, src, offset);
@@ -112,6 +122,9 @@ BinaryOp::BinaryOp(Mips::OpCode c, Location *d, Location *o1, Location *o2)
   Assert(dst != NULL && op1 != NULL && op2 != NULL);
   Assert(code >= 0 && code < Mips::NumOps);
   sprintf(printed, "%s = %s %s %s", dst->GetName(), op1->GetName(), opName[code], op2->GetName());
+  killSet.Append(dst);
+  genSet.Append(op1);
+  genSet.Append(op2);
 }
 void BinaryOp::EmitSpecific(Mips *mips) {	  
   mips->EmitBinaryOp(code, dst, op1, op2);
@@ -145,6 +158,7 @@ IfZ::IfZ(Location *te, const char *l)
    : test(te), label(strdup(l)) {
   Assert(test != NULL && label != NULL);
   sprintf(printed, "IfZ %s Goto %s", test->GetName(), label);
+  genSet.Append(test);
 }
 void IfZ::EmitSpecific(Mips *mips) {	  
   mips->EmitIfZ(test, label);
@@ -176,6 +190,7 @@ void EndFunc::EmitSpecific(Mips *mips) {
  
 Return::Return(Location *v) : val(v) {
   sprintf(printed, "Return %s", val? val->GetName() : "");
+  genSet.Append(val);
 }
 void Return::EmitSpecific(Mips *mips) {	  
   mips->EmitReturn(val);
@@ -187,6 +202,7 @@ PushParam::PushParam(Location *p)
   :  param(p) {
   Assert(param != NULL);
   sprintf(printed, "PushParam %s", param->GetName());
+  genSet.Append(param);
 }
 void PushParam::EmitSpecific(Mips *mips) {
   mips->EmitParam(param);
@@ -207,6 +223,7 @@ void PopParams::EmitSpecific(Mips *mips) {
 LCall::LCall(const char *l, Location *d)
   :  label(strdup(l)), dst(d) {
   sprintf(printed, "%s%sLCall %s", dst? dst->GetName(): "", dst?" = ":"", label);
+  killSet.Append(dst);
 }
 void LCall::EmitSpecific(Mips *mips) {
   mips->EmitLCall(dst, label);
@@ -218,6 +235,8 @@ ACall::ACall(Location *ma, Location *d)
   Assert(methodAddr != NULL);
   sprintf(printed, "%s%sACall %s", dst? dst->GetName(): "", dst?" = ":"",
 	    methodAddr->GetName());
+  killSet.Append(dst);
+  genSet.Append(methodAddr);
 }
 void ACall::EmitSpecific(Mips *mips) {
   mips->EmitACall(dst, methodAddr);
