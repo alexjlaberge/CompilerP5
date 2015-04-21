@@ -42,6 +42,7 @@ class CodeGenerator {
     static const int VarSize = 4;
 
     CodeGenerator();
+    Hashtable<Instruction*> labels;
 
     void constructCFG();
     void livelinessAnalysis();

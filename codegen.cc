@@ -12,25 +12,29 @@
 #include "ast_decl.h"
 #include "errors.h"
 
-void CodeGenerator::constructCFG()
+void CodeGenerator::constructCFG() //Done?
 {
   for(int i = 0; i < code->NumElements() - 1; i++)
   {
     if(dynamic_cast<IfZ*>(code->Nth(i)))
     {
+      code->Nth(i)->addEdge(labels.Lookup(((IfZ*)code->Nth(i))->GetLabel()));
       //Add label location to Instructions neighbors
     }
     else if(dynamic_cast<Goto*>(code->Nth(i)))
     {
+    	code->Nth(i)->addEdge(labels.Lookup(((Goto*)code->Nth(i))->GetLabel()));
       //Add label location to Instructions neighbors
       continue;
     }
     else if(dynamic_cast<Return*>(code->Nth(i)))
     {
+
       continue;
     }
     else if(dynamic_cast<EndFunc*>(code->Nth(i)))
     {
+
       break;
     }
     code->Nth(i)->addEdge(code->Nth(i+1));
@@ -88,9 +92,52 @@ void CodeGenerator::livelinessAnalysis()
 
 }
 
-void CodeGenerator::constructInterGraph()
+void CodeGenerator::constructInterGraph() //Done?
 {
+	for(int i = 0; i < code->NumElements(); i++)
+	{
+		List<Location*> inSet = code->Nth(i)->inSet;
+		for(int j = 0; j < inSet.NumElements(); j++)
+		{
+			for(int k = 0; k < inSet.NumElements(); k++)
+			{
+				if(j != k)
+				{
+					bool found = false;
+					for(int l = 0; l < inSet.Nth(j)->edges.NumElements(); l++)
+					{
+						if(inSet.Nth(j)->edges.Nth(l) == inSet.Nth(k))
+						{
+							found = true;
+						}
+					}
+					if(!found)
+						inSet.Nth(j)->edges.Append(inSet.Nth(k));
+				}
+			}
+		}
+		List<Location*> outSet = code->Nth(i)->outSet;
+		for(int j = 0; j < outSet.NumElements(); j++)
+		{
+			for(int k = 0; k < outSet.NumElements(); k++)
+			{
+				if(j != k)
+				{
+					bool found = false;
+					for(int l = 0; l < outSet.Nth(j)->edges.NumElements(); l++)
+					{
+						if(outSet.Nth(j)->edges.Nth(l) == outSet.Nth(k))
+						{
+							found = true;
+						}
+					}
+					if(!found)
+						outSet.Nth(j)->edges.Append(inSet.Nth(k));
+				}
+			}
+		}
 
+	}
 }
 
 void CodeGenerator::color()
@@ -203,7 +250,9 @@ Location *CodeGenerator::GenBinaryOp(const char *opName, Location *op1,
 
 void CodeGenerator::GenLabel(const char *label)
 {
-  code->Append(new Label(label));
+  Label *tmp = new Label(label);
+  labels.Enter(label, tmp);
+  code->Append(tmp);
 }
 
 void CodeGenerator::GenIfZ(Location *test, const char *label)

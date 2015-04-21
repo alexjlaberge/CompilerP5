@@ -47,6 +47,7 @@ class Location
     Mips::Register reg;
 	  
   public:
+  	List<Location*> edges;
     Location(Segment seg, int offset, const char *name);
     Location(Location *base, int refOff) :
 	variableName(base->variableName), segment(base->segment),
