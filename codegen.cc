@@ -54,6 +54,7 @@ void CodeGenerator::livelinessAnalysis()
       currInst = code->Nth(i);
       List<Instruction*> edges = currInst->getEdges();
       List<Location*> outSet;
+      List<Location*> inSet;
       for(int j = 0; j < edges.NumElements(); j++)
       {
         Instruction* currEdge = edges.Nth(j);
@@ -78,6 +79,43 @@ void CodeGenerator::livelinessAnalysis()
         List<Location*> killSet = currInst->killSet;
         currInst->outSet = outSet;
         List<Location*> old_IN = outSet;
+        for(int j = 0; j < genSet.NumElements(); j++)
+        {
+        	inSet.Append(genSet.Nth(j));
+        }
+        List<Location*> tmpList;
+        for(int j = 0; j < outSet.NumElements(); j++)
+        {
+        	tmpList.Append(outSet.Nth(j));
+        }
+        for(int j = 0; j < tmpList.NumElements(); j++)
+        {
+        	for(int k = 0; k < killSet.NumElements(); k++)
+        	{
+        		if(tmpList.Nth(j) == killSet.Nth(k))
+        		{
+        			tmpList.RemoveAt(j);
+        			j--;
+        			break;
+        		}
+        	}
+        }
+        for(int j = 0; j < tmpList.NumElements(); j++)
+        {
+        	Location* currElem = tmpList.Nth(j);
+          	bool foundElem = false;
+          	for(int k = 0; k < inSet.NumElements(); k++)
+          	{
+            	if(inSet.Nth(k) == currElem)
+            	{
+              		foundElem = true;
+            	}
+          	}
+          	if(!foundElem)
+          	{
+            	inSet.Append(currElem);
+          	}
+        }
 
       }
     }
