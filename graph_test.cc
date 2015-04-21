@@ -1,5 +1,9 @@
 #include "graph.h"
 #include <cassert>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 int main() {
         /* Example from slides */
@@ -31,11 +35,18 @@ int main() {
         a.add_edge("f", "b");
         a.add_edge("f", "e");
 
-        assert(a.can_color(1) == false);
-        assert(a.can_color(2) == false);
-        assert(a.can_color(3) == false);
-        assert(a.can_color(4) == true);
-        assert(a.can_color(5) == true);
+        cout << "graph_test";
+
+        assert(a.can_color(1).size() == 4);
+        cout << ".";
+        assert(a.can_color(2).size() == 2);
+        cout << ".";
+        assert(a.can_color(3).size() == 1);
+        cout << ".";
+        assert(a.can_color(4).size() == 0);
+        cout << ".";
+        assert(a.can_color(5).size() == 0);
+        cout << "." << endl;
 
         return 0;
 }

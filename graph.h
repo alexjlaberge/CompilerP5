@@ -10,8 +10,10 @@ public:
         /* Add an edge between two variables if it doesn't already exist */
         void add_edge(const char *a, const char *b);
 
-        /* Check if graph can be colored with 'k' colors */
-        bool can_color(int k);
+        /* Returns a list of variables that have to be spilled. An empty list
+         * means no spilling is necessary.
+         */
+        std::vector<const char *> can_color(int k);
 
 private:
         std::map<const char*, std::vector<const char*> > edges;
