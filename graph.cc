@@ -36,14 +36,25 @@ void Graph::add_edge(const char *a, const char *b) {
         edges[a].push_back(b);
 }
 
-bool Graph::can_color(int k) {
+void clean_links(map<const char *, vector<const char*> > &graph, Comp &c)
+{
+        for (auto &n : graph) {
+                n.second.erase(remove_if(n.second.begin(),
+                                        n.second.end(),
+                                        c), n.second.end());
+        }
+}
+
+vector<const char *> Graph::can_color(int k) {
         stack<const char *> s;
         vector<const char *> added;
+        vector<const char *> spilled;
         map<const char *, int> colors;
         auto g = edges;
 
-        while (s.size() < edges.size()) {
+        while (s.size() < g.size()) {
                 int init_size = s.size();
+                const char *most_cons = g.begin()->first;
 
                 for (const auto &node : g) {
                         Comp c(node.first);
@@ -56,18 +67,19 @@ bool Graph::can_color(int k) {
                                 added.push_back(node.first);
                                 g.erase(g.find(node.first));
 
-                                for (auto &n : g) {
-                                        n.second.erase(remove_if(n.second.begin(),
-                                                        n.second.end(),
-                                                        c), n.second.end());
-                                }
+                                clean_links(g, c);
 
                                 break;
+                        } else if (node.second.size() > g[most_cons].size()) {
+                                most_cons = node.first;
                         }
                 }
 
                 if (init_size == s.size()) {
-                        return false;
+                        g.erase(g.find(most_cons));
+                        Comp c(most_cons);
+                        clean_links(g, c);
+                        spilled.push_back(most_cons);
                 }
         }
 
@@ -88,13 +100,11 @@ bool Graph::can_color(int k) {
                         }
                 }
 
-                if (color == 0) {
-                        return false;
-                }
+                assert(color != 0);
 
                 colors[s.top()] = color;
                 s.pop();
         }
 
-        return true;
+        return spilled;
 }
