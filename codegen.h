@@ -22,6 +22,7 @@ typedef enum { Alloc, ReadLine, ReadInteger, StringEqual,
 class CodeGenerator {
   private:
     List<Instruction*> *code;
+    std::vector<Location*> locs;
     int curStackOffset, curGlobalOffset;
     int insideFn;
 

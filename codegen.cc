@@ -213,6 +213,7 @@ Location *CodeGenerator::GenLocalVariable(const char *varName)
 {            
     curStackOffset -= VarSize;
     Location *loc = new Location(fpRelative, curStackOffset+4, varName);
+    locs.push_back(loc);
     return loc;
 }
 
@@ -220,18 +221,21 @@ Location *CodeGenerator::GenGlobalVariable(const char *varName)
 {
     curGlobalOffset += VarSize;
     Location *loc = new Location(gpRelative, curGlobalOffset-4, varName);
+    locs.push_back(loc);
     return loc;
 }
 
 Location *CodeGenerator::GenParameter(int index, const char *varName)
 {
     Location *loc = new Location(fpRelative, OffsetToFirstParam+index*VarSize, varName);
+    locs.push_back(loc);
     return loc;
 }
 
 Location *CodeGenerator::GenIndirect(Location* base, int offset)
 {
     Location *loc = new Location(base, offset);
+    locs.push_back(loc);
     return loc;
 }
 
