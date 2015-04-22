@@ -166,7 +166,10 @@ void CodeGenerator::constructInterGraph() //Done?
 						}
 					}
 					if(!found)
+					{
+						cout << "DICKS1"<<endl;
 						inSet.Nth(j)->edges.Append(inSet.Nth(k));
+					}
 				}
 			}
 		}
@@ -186,7 +189,10 @@ void CodeGenerator::constructInterGraph() //Done?
 						}
 					}
 					if(!found)
+					{
+						cout << "DICKS2" << endl;
 						outSet.Nth(j)->edges.Append(inSet.Nth(k));
+					}
 				}
 			}
 		}
