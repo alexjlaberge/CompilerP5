@@ -12,6 +12,17 @@
 #include "ast_decl.h"
 #include "errors.h"
 
+ class Mips;
+
+    void CodeGenerator::setRegs()
+    {
+    	for(int i = 0; i < locs.size(); i++)
+    	{
+    		//locs[i]->SetRegister(Mips::t0);
+    		//Mips::regs[Mips::t0].isDirty = true;
+    	}
+    }
+
 void CodeGenerator::constructCFG() //Done?
 {
   for(int i = 0; i < code->NumElements() - 1; i++)

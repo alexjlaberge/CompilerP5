@@ -44,7 +44,7 @@ class CodeGenerator {
 
     CodeGenerator();
     Hashtable<Instruction*> labels;
-
+    void setRegs();
     void constructCFG();
     void livelinessAnalysis();
     void constructInterGraph();

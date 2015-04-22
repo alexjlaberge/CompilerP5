@@ -38,9 +38,10 @@ void Program::Emit() {
     decls->EmitAll(cg);
     if (ReportError::NumErrors() == 0)
     {
-    	cg->livelinessAnalysis();
-    	cg->constructInterGraph();
-    	cg->color();
+    	//cg->livelinessAnalysis();
+    	//cg->constructInterGraph();
+    	//cg->color();
+        cg->setRegs();
         cg->DoFinalCodeGen();
     }
 }
