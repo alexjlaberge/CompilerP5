@@ -174,8 +174,14 @@ void BeginFunc::SetFrameSize(int numBytesForAllLocalsAndTemps) {
   frameSize = numBytesForAllLocalsAndTemps; 
   sprintf(printed,"BeginFunc %d", frameSize);
 }
+#include <iostream>
 void BeginFunc::EmitSpecific(Mips *mips) {
   mips->EmitBeginFunction(frameSize);
+        for (size_t i = 0; i < inSet.NumElements(); i++)
+        {
+                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                                inSet.Nth(i)->GetRegister());
+        }
 }
 
 
