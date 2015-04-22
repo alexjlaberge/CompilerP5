@@ -218,15 +218,25 @@ void PopParams::EmitSpecific(Mips *mips) {
 } 
 
 
-
-
 LCall::LCall(const char *l, Location *d)
   :  label(strdup(l)), dst(d) {
   sprintf(printed, "%s%sLCall %s", dst? dst->GetName(): "", dst?" = ":"", label);
   killSet.Append(dst);
 }
 void LCall::EmitSpecific(Mips *mips) {
+        for (size_t i = 0; i < outSet.NumElements(); i++)
+        {
+                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
+                                outSet.Nth(i)->GetRegister());
+        }
+
   mips->EmitLCall(dst, label);
+
+        for (size_t i = 0; i < outSet.NumElements(); i++)
+        {
+                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
+                                outSet.Nth(i)->GetRegister());
+        }
 }
 
 
@@ -239,7 +249,19 @@ ACall::ACall(Location *ma, Location *d)
   genSet.Append(methodAddr);
 }
 void ACall::EmitSpecific(Mips *mips) {
+        for (size_t i = 0; i < outSet.NumElements(); i++)
+        {
+                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
+                                outSet.Nth(i)->GetRegister());
+        }
+
   mips->EmitACall(dst, methodAddr);
+
+        for (size_t i = 0; i < outSet.NumElements(); i++)
+        {
+                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
+                                outSet.Nth(i)->GetRegister());
+        }
 } 
 
 
