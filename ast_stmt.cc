@@ -38,6 +38,7 @@ void Program::Emit() {
     decls->EmitAll(cg);
     if (ReportError::NumErrors() == 0)
     {
+        cg->constructCFG();
     	cg->livelinessAnalysis();
     	cg->constructInterGraph();
     	cg->color();

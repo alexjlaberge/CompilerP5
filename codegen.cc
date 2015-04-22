@@ -150,11 +150,11 @@ void CodeGenerator::livelinessAnalysis()
 
 void CodeGenerator::constructInterGraph() //Done?
 {
-	cout << "FUCK" << endl;
+	//cout << "FUCK" << endl;
 	for(int i = 0; i < code->NumElements(); i++)
 	{
 		List<Location*> inSet = code->Nth(i)->inSet;
-		cout << "INSET SIZE: " << inSet.NumElements() << endl;
+		//cout << "INSET SIZE: " << inSet.NumElements() << endl;
 		for(int j = 0; j < inSet.NumElements(); j++)
 		{
 			for(int k = 0; k < inSet.NumElements(); k++)
@@ -171,14 +171,14 @@ void CodeGenerator::constructInterGraph() //Done?
 					}
 					if(!found)
 					{
-						cout << "DICKS1"<<endl;
+						//cout << "DICKS1"<<endl;
 						inSet.Nth(j)->edges.Append(inSet.Nth(k));
 					}
 				}
 			}
 		}
 		List<Location*> outSet = code->Nth(i)->outSet;
-		cout << "OUTSET SIZE: " << outSet.NumElements() << endl;
+		//cout << "OUTSET SIZE: " << outSet.NumElements() << endl;
 		for(int j = 0; j < outSet.NumElements(); j++)
 		{
 			for(int k = 0; k < outSet.NumElements(); k++)
@@ -195,7 +195,7 @@ void CodeGenerator::constructInterGraph() //Done?
 					}
 					if(!found)
 					{
-						cout << "DICKS2" << endl;
+						//cout << "DICKS2" << endl;
 						outSet.Nth(j)->edges.Append(inSet.Nth(k));
 					}
 				}
