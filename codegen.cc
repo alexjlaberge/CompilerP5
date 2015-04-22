@@ -95,7 +95,7 @@ void CodeGenerator::livelinessAnalysis()
         List<Location*> genSet = currInst->genSet;
         List<Location*> killSet = currInst->killSet;
         currInst->outSet = outSet;
-        List<Location*> old_IN = outSet;
+        List<Location*> old_IN = currInst->inSet;
         for(int j = 0; j < genSet.NumElements(); j++)
         {
         	inSet.Append(genSet.Nth(j));
@@ -135,6 +135,26 @@ void CodeGenerator::livelinessAnalysis()
         }
         currInst->outSet = outSet;
         currInst->inSet = inSet;
+        /*if(inSet.NumElements() != old_IN.NumElements())
+        	changed = true;
+        else
+        	for(int j = 0; j < inSet.NumElements(); j++)
+        	{
+        		Location* currElem = inSet.Nth(j);
+	          	bool foundElem = false;
+	          	for(int k = 0; k < old_IN.NumElements(); k++)
+	          	{
+	            	if(old_IN.Nth(k) == currElem)
+	            	{
+	              		foundElem = true;
+	            	}
+	          	}
+	          	if(!foundElem)
+	          	{
+	            	changed = true;
+	            	break;
+	          	}
+        	}*/
       }
     }
 
