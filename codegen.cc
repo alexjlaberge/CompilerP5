@@ -66,7 +66,7 @@ void CodeGenerator::livelinessAnalysis()
   while(changed)
   {
     changed = false;
-    for(int i = 0; i < code->NumElements(); i++)
+    for(int i = code->NumElements()-1; i >= 0; i--)
     {
       currInst = code->Nth(i);
       List<Instruction*> edges = currInst->getEdges();
@@ -135,6 +135,28 @@ void CodeGenerator::livelinessAnalysis()
         }
         currInst->outSet = outSet;
         currInst->inSet = inSet;
+        cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
+        for(int j = 0; j < inSet.NumElements(); j++)
+        {
+        	cerr << "INSET: ";
+        	cerr << inSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < outSet.NumElements(); j++)
+        {
+        	cerr << "OUTSET: ";
+        	cerr << outSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < killSet.NumElements(); j++)
+        {
+        	cerr << "KILLSET: ";
+        	cerr << killSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < genSet.NumElements(); j++)
+        {
+        	cerr << "GENSET: ";
+        	cerr << genSet.Nth(j)->GetName() << endl;
+        }
+        cerr << endl;
         /*if(inSet.NumElements() != old_IN.NumElements())
         	changed = true;
         else
@@ -216,7 +238,7 @@ void CodeGenerator::constructInterGraph() //Done?
 					if(!found)
 					{
 						//cout << "DICKS2" << endl;
-						outSet.Nth(j)->edges.Append(inSet.Nth(k));
+						outSet.Nth(j)->edges.Append(outSet.Nth(k));
 					}
 				}
 			}
@@ -343,6 +365,7 @@ void CodeGenerator::color()
                         }
                 }
 
+                cerr << "Allocating " << *(available.begin()) << endl;
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }

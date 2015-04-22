@@ -80,6 +80,7 @@ class Instruction {
     List<Location*> genSet;
     List<Location*> killSet;
 
+    char* PrintName(){return printed;}
     void addEdge(Instruction* a)
     {
     	edges.Append(a);
