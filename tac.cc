@@ -224,18 +224,18 @@ LCall::LCall(const char *l, Location *d)
   killSet.Append(dst);
 }
 void LCall::EmitSpecific(Mips *mips) {
-        for (size_t i = 0; i < outSet.NumElements(); i++)
+        for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
-                                outSet.Nth(i)->GetRegister());
+                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                                inSet.Nth(i)->GetRegister());
         }
 
   mips->EmitLCall(dst, label);
 
-        for (size_t i = 0; i < outSet.NumElements(); i++)
+        for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
-                                outSet.Nth(i)->GetRegister());
+                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                                inSet.Nth(i)->GetRegister());
         }
 }
 
@@ -249,18 +249,18 @@ ACall::ACall(Location *ma, Location *d)
   genSet.Append(methodAddr);
 }
 void ACall::EmitSpecific(Mips *mips) {
-        for (size_t i = 0; i < outSet.NumElements(); i++)
+        for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
-                                outSet.Nth(i)->GetRegister());
+                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                                inSet.Nth(i)->GetRegister());
         }
 
   mips->EmitACall(dst, methodAddr);
 
-        for (size_t i = 0; i < outSet.NumElements(); i++)
+        for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), outSet.Nth(i)->GetName()),
-                                outSet.Nth(i)->GetRegister());
+                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                                inSet.Nth(i)->GetRegister());
         }
 } 
 
