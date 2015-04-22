@@ -46,14 +46,13 @@ void CodeGenerator::constructCFG() //Done?
     }
     else if(dynamic_cast<Return*>(code->Nth(i)))
     {
-
-      continue;
+            continue;
     }
     else if(dynamic_cast<EndFunc*>(code->Nth(i)))
     {
-
-      break;
+            continue;
     }
+
     code->Nth(i)->addEdge(code->Nth(i+1));
     //Add next instruction to Instructions neighbors
   }
@@ -72,6 +71,7 @@ void CodeGenerator::livelinessAnalysis()
       List<Instruction*> edges = currInst->getEdges();
       List<Location*> outSet;
       List<Location*> inSet;
+
       for(int j = 0; j < edges.NumElements(); j++)
       {
         Instruction* currEdge = edges.Nth(j);
@@ -136,27 +136,27 @@ void CodeGenerator::livelinessAnalysis()
         currInst->outSet = outSet;
         currInst->inSet = inSet;
         cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
-        for(int j = 0; j < inSet.NumElements(); j++)
-        {
-        	cerr << "INSET: ";
-        	cerr << inSet.Nth(j)->GetName() << endl;
-        }
-        for(int j = 0; j < outSet.NumElements(); j++)
-        {
-        	cerr << "OUTSET: ";
-        	cerr << outSet.Nth(j)->GetName() << endl;
-        }
-        for(int j = 0; j < killSet.NumElements(); j++)
-        {
-        	cerr << "KILLSET: ";
-        	cerr << killSet.Nth(j)->GetName() << endl;
-        }
-        for(int j = 0; j < genSet.NumElements(); j++)
-        {
-        	cerr << "GENSET: ";
-        	cerr << genSet.Nth(j)->GetName() << endl;
-        }
-        cerr << endl;
+        //for(int j = 0; j < inSet.NumElements(); j++)
+        //{
+        //	cerr << "INSET: ";
+        //	cerr << inSet.Nth(j)->GetName() << endl;
+        //}
+        //for(int j = 0; j < outSet.NumElements(); j++)
+        //{
+        //	cerr << "OUTSET: ";
+        //	cerr << outSet.Nth(j)->GetName() << endl;
+        //}
+        //for(int j = 0; j < killSet.NumElements(); j++)
+        //{
+        //	cerr << "KILLSET: ";
+        //	cerr << killSet.Nth(j)->GetName() << endl;
+        //}
+        //for(int j = 0; j < genSet.NumElements(); j++)
+        //{
+        //	cerr << "GENSET: ";
+        //	cerr << genSet.Nth(j)->GetName() << endl;
+        //}
+        //cerr << endl;
         /*if(inSet.NumElements() != old_IN.NumElements())
         	changed = true;
         else
@@ -365,7 +365,7 @@ void CodeGenerator::color()
                         }
                 }
 
-                cerr << "Allocating " << *(available.begin()) << endl;
+                /* cerr << "Allocating " << *(available.begin()) << endl; */
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }
