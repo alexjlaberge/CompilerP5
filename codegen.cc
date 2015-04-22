@@ -16,6 +16,7 @@
 
 using std::vector;
 using std::stack;
+using namespace std;
 
  class Mips;
 
@@ -132,7 +133,8 @@ void CodeGenerator::livelinessAnalysis()
             	inSet.Append(currElem);
           	}
         }
-
+        currInst->outSet = outSet;
+        currInst->inSet = inSet;
       }
     }
 
@@ -148,9 +150,11 @@ void CodeGenerator::livelinessAnalysis()
 
 void CodeGenerator::constructInterGraph() //Done?
 {
+	cout << "FUCK" << endl;
 	for(int i = 0; i < code->NumElements(); i++)
 	{
 		List<Location*> inSet = code->Nth(i)->inSet;
+		cout << "INSET SIZE: " << inSet.NumElements() << endl;
 		for(int j = 0; j < inSet.NumElements(); j++)
 		{
 			for(int k = 0; k < inSet.NumElements(); k++)
@@ -174,6 +178,7 @@ void CodeGenerator::constructInterGraph() //Done?
 			}
 		}
 		List<Location*> outSet = code->Nth(i)->outSet;
+		cout << "OUTSET SIZE: " << outSet.NumElements() << endl;
 		for(int j = 0; j < outSet.NumElements(); j++)
 		{
 			for(int k = 0; k < outSet.NumElements(); k++)
