@@ -13,7 +13,7 @@ function spim_run() {
 }
 
 function dcc_run() {
-        ./dcc < ${1}.decaf > ${1}.s 2> /dev/null
+        ./dcc < ${1}.decaf > ${1}.s #2> /dev/null
         spim_run ${1}
         cp ${1}.out ${CURRENT_OUTPUT}
 
