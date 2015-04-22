@@ -11,6 +11,11 @@
 #include "mips.h"
 #include "ast_decl.h"
 #include "errors.h"
+#include <stack>
+#include <cassert>
+
+using std::vector;
+using std::stack;
 
 void CodeGenerator::constructCFG() //Done?
 {
@@ -178,9 +183,114 @@ void CodeGenerator::constructInterGraph() //Done?
 	}
 }
 
+class Comp
+{
+public:
+        Comp(const Location *thing) : mine(thing) {}
+
+        bool operator()(const Location *heyo) const
+        {
+                return heyo == mine;
+        }
+
+private:
+        const Location *mine;
+};
+
+size_t real_size(List<Location *> &graph, vector<Location *> &ignore)
+{
+        size_t size = graph.NumElements();
+
+        for (size_t i = 0; i < graph.NumElements(); i++)
+        {
+                for (auto &ig : ignore)
+                {
+                        if (graph.Nth(i) == ig)
+                        {
+                                size--;
+                                break;
+                        }
+                }
+        }
+
+        assert(size < graph.NumElements());
+        assert(size > 0);
+
+        return size;
+}
+
 void CodeGenerator::color()
 {
-  
+        stack<Location *> s;
+        vector<Location *> ignore;
+        int k = 18;
+        auto g = locs;
+
+        while (s.size() < g.size()) {
+                int init_size = s.size();
+                Location *most_cons = *(g.begin());
+
+                for (const auto &node : g) {
+                        bool add = false;
+
+                        if (real_size(node->edges, ignore) < k) {
+                                s.push(node);
+                                ignore.push_back(node);
+                                break;
+                        } else if (real_size(node->edges, ignore) >
+                                        real_size(most_cons->edges, ignore)) {
+                                most_cons = node;
+                        }
+                }
+
+                if (init_size == s.size()) {
+                        ignore.push_back(most_cons);
+                }
+        }
+
+        while (s.size() > 0) {
+                vector<Mips::Register> available;
+                int color = 0;
+
+                available.push_back(Mips::t0);
+                available.push_back(Mips::t1);
+                available.push_back(Mips::t2);
+                available.push_back(Mips::t3);
+                available.push_back(Mips::t4);
+                available.push_back(Mips::t5);
+                available.push_back(Mips::t6);
+                available.push_back(Mips::t7);
+                available.push_back(Mips::t8);
+                available.push_back(Mips::t9);
+                available.push_back(Mips::s0);
+                available.push_back(Mips::s1);
+                available.push_back(Mips::s2);
+                available.push_back(Mips::s3);
+                available.push_back(Mips::s4);
+                available.push_back(Mips::s5);
+                available.push_back(Mips::s6);
+                available.push_back(Mips::s7);
+
+                for (size_t i = 0; i < s.top()->edges.NumElements(); i++)
+                {
+                        if (s.top()->edges.Nth(i)->GetRegister() == NULL)
+                        {
+                                continue;
+                        }
+
+                        for (size_t i = 0; i < available.size(); i++)
+                        {
+                                if (available[i] == s.top()->edges.Nth(i)->GetRegister())
+                                {
+                                        available.erase(available.begin() + i);
+                                        break;
+                                }
+                        }
+                }
+
+                s.top()->SetRegister(*(available.begin()));
+                s.pop();
+        }
 }
 
 
