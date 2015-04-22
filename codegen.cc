@@ -230,8 +230,8 @@ size_t real_size(List<Location *> &graph, vector<Location *> &ignore)
                 }
         }
 
-        assert(size < graph.NumElements());
-        assert(size > 0);
+        assert(size <= graph.NumElements());
+        assert(size >= 0);
 
         return size;
 }
@@ -288,6 +288,8 @@ void CodeGenerator::color()
                 available.push_back(Mips::s6);
                 available.push_back(Mips::s7);
 
+                std::cerr << "Checking " << s.top()->edges.NumElements() <<
+                        " edges" << std::endl;
                 for (size_t i = 0; i < s.top()->edges.NumElements(); i++)
                 {
                         if (s.top()->edges.Nth(i)->GetRegister() == NULL)
@@ -305,6 +307,7 @@ void CodeGenerator::color()
                         }
                 }
 
+                std::cerr << "Assigning register " << *(available.begin()) << std::endl;
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }
