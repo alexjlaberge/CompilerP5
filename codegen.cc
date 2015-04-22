@@ -241,6 +241,18 @@ size_t real_size(List<Location *> &graph, vector<Location *> &ignore)
         return size;
 }
 
+bool vec_find(vector<Location *> &v, const Location *l)
+{
+        for (const auto &loc : v)
+        {
+                if (l == loc)
+                {
+                        return true;
+                }
+        }
+        return false;
+}
+
 void CodeGenerator::color()
 {
         stack<Location *> s;
@@ -255,7 +267,8 @@ void CodeGenerator::color()
                 for (const auto &node : g) {
                         bool add = false;
 
-                        if (real_size(node->edges, ignore) < k) {
+                        if (vec_find(ignore, node) == false &&
+                                        real_size(node->edges, ignore) < k) {
                                 s.push(node);
                                 ignore.push_back(node);
                                 break;
@@ -293,8 +306,6 @@ void CodeGenerator::color()
                 available.push_back(Mips::s6);
                 available.push_back(Mips::s7);
 
-                std::cerr << "Checking " << s.top()->edges.NumElements() <<
-                        " edges" << std::endl;
                 for (size_t i = 0; i < s.top()->edges.NumElements(); i++)
                 {
                         if (s.top()->edges.Nth(i)->GetRegister() == NULL)
@@ -302,17 +313,16 @@ void CodeGenerator::color()
                                 continue;
                         }
 
-                        for (size_t i = 0; i < available.size(); i++)
+                        for (size_t j = 0; j < available.size(); j++)
                         {
-                                if (available[i] == s.top()->edges.Nth(i)->GetRegister())
+                                if (available[j] == s.top()->edges.Nth(i)->GetRegister())
                                 {
-                                        available.erase(available.begin() + i);
+                                        available.erase(available.begin() + j);
                                         break;
                                 }
                         }
                 }
 
-                std::cerr << "Assigning register " << *(available.begin()) << std::endl;
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }

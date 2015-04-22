@@ -21,7 +21,7 @@ function dcc_run() {
         spim_run ${1}
 }
 
-make
+make || exit 1
 
 if [ ! -z "${1}" ]
 then
