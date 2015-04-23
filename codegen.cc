@@ -93,18 +93,10 @@ void CodeGenerator::livelinessAnalysis()
                 {
                         for (size_t loc = 0; loc < in.NumElements(); loc++)
                         {
-                                bool add = true;
-                                for (size_t k = 0; k < parents.Nth(j)->outSet.NumElements(); k++)
-                                {
-                                        if (parents.Nth(j)->outSet.Nth(k) ==
-                                                        in.Nth(loc))
-                                        {
-                                                add = false;
-                                        }
-                                }
-
                                 parents.Nth(j)->outSet.Append(in.Nth(loc));
                         }
+
+                        parents.Nth(j)->outSet.Unique();
                 }
         }
 }
