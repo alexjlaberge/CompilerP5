@@ -57,113 +57,63 @@ void CodeGenerator::constructCFG() //Done?
     //Add next instruction to Instructions neighbors
   }
 }
-  
+
 void CodeGenerator::livelinessAnalysis()
 {
-  Instruction *currInst;
-  bool changed = true;
-  while(changed)
-  {
-    changed = false;
-    for(int i = 0; i < code->NumElements(); i++)
-    {
-      currInst = code->Nth(i);
-      List<Instruction*> edges = currInst->getEdges();
-      List<Location*> outSet;
-      List<Location*> inSet;
-      List<Location*> old_IN = currInst->inSet;
-      for(int j = 0; j < edges.NumElements(); j++)
-      {
-        Instruction* currEdge = edges.Nth(j);
-        List<Location*> edgeInSet = currEdge->inSet;
-        for(int k = 0; k < edgeInSet.NumElements(); k++)
-        {
-          Location* currElem = edgeInSet.Nth(k);
-          outSet.Append(currElem);
-          outSet.Unique();
-        }
-        List<Location*> genSet = currInst->genSet;
-        List<Location*> killSet = currInst->killSet;
-        //OUT(X) = Union(IN(Y))
-        currInst->outSet = outSet;
-        for(int j = 0; j < genSet.NumElements(); j++)
-        {
-        	inSet.Append(genSet.Nth(j));
-        }
-        List<Location*> tmpList;
-        for(int j = 0; j < outSet.NumElements(); j++)
-        {
-        	tmpList.Append(outSet.Nth(j));
-        }
-        for(int j = 0; j < tmpList.NumElements(); j++)
-        {
-        	for(int k = 0; k < killSet.NumElements(); k++)
-        	{
-        		if(tmpList.Nth(j) == killSet.Nth(k))
-        		{
-        			tmpList.RemoveAt(j);
-        			j--;
-        			break;
-        		}
-        	}
-        }
-        for(int j = 0; j < tmpList.NumElements(); j++)
-        {
-        	Location* currElem = tmpList.Nth(j);
-          inSet.Append(currElem);
-          inSet.Unique();
-        }
-        inSet.Unique();
-        outSet.Unique();
-        old_IN.Unique();
-        currInst->outSet = outSet;
-        currInst->inSet = inSet;
-        /*if(inSet.NumElements() != old_IN.NumElements())
-        {	
-          changed = true;
-          cerr << "diffnum " << currInst->PrintName() << endl;
-          for(int j = 0; j < inSet.NumElements(); j++)
-          {
-            cerr << "INSET: ";
-            cerr << inSet.Nth(j)->GetName() << endl;
-          }
-        for(int j = 0; j < old_IN.NumElements(); j++)
-        {
-          cerr << "OLDINSET: ";
-          cerr << old_IN.Nth(j)->GetName() << endl;
-        }
+        List<Location*> unioned_in;
 
-        }*/
-        //else
-        //{
-        	for(int j = 0; j < inSet.NumElements(); j++)
-        	{
-        		Location* currElem = inSet.Nth(j);
-	          	bool foundElem = false;
-	          	for(int k = 0; k < old_IN.NumElements(); k++)
-	          	{
-	            	if(old_IN.Nth(k) == currElem)
-	            	{
-	              		foundElem = true;
-	            	}
-	          	}
-	          	if(!foundElem)
-	          	{
-	            	changed = true;
-                //cerr << currInst->PrintName() << endl;
-	          	}
-        	}
-        //}
-      }
-    }
-    //old_IN = IN(X);
-    //OUT(X) = Union(IN(Y)) for all successors Y of X
-    //IN(X) = GEN(X) + (OUT(X) - KILL(X))
+        for (int i = code->NumElements() - 1; i >= 0; i--)
+        {
+                List<Location*> in;
 
+                if (dynamic_cast<BeginFunc*>(code->Nth(i)) != nullptr)
+                {
+                        unioned_in.Clear();
+                }
 
-    
-  }
+                code->Nth(i)->outSet = unioned_in;
 
+                /* in = gen + out - kill */
+                in = code->Nth(i)->genSet;
+
+                for (size_t j = 0; j < code->Nth(i)->outSet.NumElements(); j++)
+                {
+                        in.Append(code->Nth(i)->outSet.Nth(j));
+                }
+
+                for (size_t k = 0; k < code->Nth(i)->killSet.NumElements(); k++)
+                {
+                        for (size_t j = 0; j < in.NumElements(); j++)
+                        {
+                                if (in.Nth(j) == code->Nth(i)->killSet.Nth(k))
+                                {
+                                        in.RemoveAt(j);
+                                        break;
+                                }
+                        }
+                }
+
+                /* unioned_in updating */
+                for (size_t j = 0; j < in.NumElements(); j++)
+                {
+                        bool add = true;
+                        for (size_t k = 0; k < unioned_in.NumElements(); k++)
+                        {
+                                if (in.Nth(j) == unioned_in.Nth(k))
+                                {
+                                        add = false;
+                                        break;
+                                }
+                        }
+
+                        if (add)
+                        {
+                                unioned_in.Append(in.Nth(j));
+                        }
+                }
+
+                code->Nth(i)->inSet = in;
+        }
 }
 
 void CodeGenerator::printSets()
