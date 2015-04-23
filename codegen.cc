@@ -62,18 +62,10 @@ void CodeGenerator::constructCFG() //Done?
 
 void CodeGenerator::livelinessAnalysis()
 {
-        List<Location*> unioned_in;
-
         for (int i = code->NumElements() - 1; i >= 0; i--)
         {
                 List<Location*> in;
-
-                if (dynamic_cast<BeginFunc*>(code->Nth(i)) != nullptr)
-                {
-                        unioned_in.Clear();
-                }
-
-                code->Nth(i)->outSet = unioned_in;
+                List<Instruction*> parents = code->Nth(i)->getEdges();
 
                 /* in = gen + out - kill */
                 in = code->Nth(i)->genSet;
@@ -95,26 +87,25 @@ void CodeGenerator::livelinessAnalysis()
                         }
                 }
 
-                /* unioned_in updating */
-                for (size_t j = 0; j < in.NumElements(); j++)
-                {
-                        bool add = true;
-                        for (size_t k = 0; k < unioned_in.NumElements(); k++)
-                        {
-                                if (in.Nth(j) == unioned_in.Nth(k))
-                                {
-                                        add = false;
-                                        break;
-                                }
-                        }
+                code->Nth(i)->inSet = in;
 
-                        if (add)
+                for (size_t j = 0; j < parents.NumElements(); j++)
+                {
+                        for (size_t loc = 0; loc < in.NumElements(); loc++)
                         {
-                                unioned_in.Append(in.Nth(j));
+                                bool add = true;
+                                for (size_t k = 0; k < parents.Nth(j)->outSet.NumElements(); k++)
+                                {
+                                        if (parents.Nth(j)->outSet.Nth(k) ==
+                                                        in.Nth(loc))
+                                        {
+                                                add = false;
+                                        }
+                                }
+
+                                parents.Nth(j)->outSet.Append(in.Nth(loc));
                         }
                 }
-
-                code->Nth(i)->inSet = in;
         }
 }
 
