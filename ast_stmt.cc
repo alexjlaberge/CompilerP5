@@ -42,8 +42,8 @@ void Program::Emit() {
     	cg->livelinessAnalysis();
     	cg->constructInterGraph();
     	cg->color();
-        //cg->printSets();
-        //cg->printRegs();
+        cg->printSets();
+        cg->printRegs();
         //cg->setRegs();
         cg->DoFinalCodeGen();
     }

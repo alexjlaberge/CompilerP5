@@ -35,12 +35,14 @@ void CodeGenerator::constructCFG() //Done?
   {
     if(dynamic_cast<IfZ*>(code->Nth(i)))
     {
-      code->Nth(i)->addEdge(labels.Lookup(((IfZ*)code->Nth(i))->GetLabel()));
+      labels.Lookup(((IfZ*)code->Nth(i))->GetLabel())->addEdge(code->Nth(i));
+      //code->Nth(i)->addEdge(labels.Lookup(((IfZ*)code->Nth(i))->GetLabel()));
       //Add label location to Instructions neighbors
     }
     else if(dynamic_cast<Goto*>(code->Nth(i)))
     {
-    	code->Nth(i)->addEdge(labels.Lookup(((Goto*)code->Nth(i))->GetLabel()));
+    	//code->Nth(i)->addEdge(labels.Lookup(((Goto*)code->Nth(i))->GetLabel()));
+    	labels.Lookup(((Goto*)code->Nth(i))->GetLabel())->addEdge(code->Nth(i));
       //Add label location to Instructions neighbors
       continue;
     }
@@ -53,7 +55,7 @@ void CodeGenerator::constructCFG() //Done?
             continue;
     }
 
-    code->Nth(i)->addEdge(code->Nth(i+1));
+    code->Nth(i+1)->addEdge(code->Nth(i));
     //Add next instruction to Instructions neighbors
   }
 }
