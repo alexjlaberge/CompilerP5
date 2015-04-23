@@ -224,15 +224,22 @@ void CodeGenerator::constructInterGraph()
 		{
 			for(int k = 0; k < killSet.NumElements(); k++)
 			{
-				if(j != k)
-				{
-					outSet.Nth(j)->edges.Append(killSet.Nth(k));
-                                        killSet.Nth(k)->edges.Append(outSet.Nth(j));
+                                outSet.Nth(j)->edges.Append(killSet.Nth(k));
+                                killSet.Nth(k)->edges.Append(outSet.Nth(j));
 
-                                        outSet.Nth(j)->edges.Unique();
-                                        killSet.Nth(k)->edges.Unique();
-				}
+                                outSet.Nth(j)->edges.Unique();
+                                killSet.Nth(k)->edges.Unique();
 			}
+
+                        for (int k = 0; k < outSet.NumElements(); k++)
+                        {
+                                if (j == k)
+                                {
+                                        continue;
+                                }
+                                outSet.Nth(j)->edges.Append(outSet.Nth(k));
+                                outSet.Nth(j)->edges.Unique();
+                        }
 		}
 	}
 }
