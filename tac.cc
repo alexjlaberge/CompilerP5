@@ -232,7 +232,7 @@ LCall::LCall(const char *l, Location *d)
 void LCall::EmitSpecific(Mips *mips) {
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                mips->SpillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
 
@@ -240,7 +240,7 @@ void LCall::EmitSpecific(Mips *mips) {
 
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                mips->FillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
 }
@@ -257,7 +257,7 @@ ACall::ACall(Location *ma, Location *d)
 void ACall::EmitSpecific(Mips *mips) {
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->SpillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                mips->SpillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
 
@@ -265,7 +265,7 @@ void ACall::EmitSpecific(Mips *mips) {
 
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
-                mips->FillRegister(new Location(fpRelative, 4 * (i + 1), inSet.Nth(i)->GetName()),
+                mips->FillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
 } 

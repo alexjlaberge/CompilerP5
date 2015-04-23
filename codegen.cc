@@ -135,7 +135,7 @@ void CodeGenerator::livelinessAnalysis()
         }
         currInst->outSet = outSet;
         currInst->inSet = inSet;
-        cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
+        //cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
         //for(int j = 0; j < inSet.NumElements(); j++)
         //{
         //	cerr << "INSET: ";
