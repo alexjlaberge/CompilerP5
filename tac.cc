@@ -202,7 +202,8 @@ void EndFunc::EmitSpecific(Mips *mips) {
  
 Return::Return(Location *v) : val(v) {
   sprintf(printed, "Return %s", val? val->GetName() : "");
-  genSet.Append(val);
+  if(val)
+  	genSet.Append(val);
 }
 void Return::EmitSpecific(Mips *mips) {	  
   mips->EmitReturn(val);
