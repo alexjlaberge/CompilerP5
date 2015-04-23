@@ -231,29 +231,36 @@ void CodeGenerator::color()
 {
         stack<Location *> s;
         vector<Location *> ignore;
+        vector<Location *> spilled;
         int k = 18;
         auto g = locs;
 
-        while (s.size() < g.size()) {
+        while (s.size() < (locs.size() - spilled.size())) {
                 int init_size = s.size();
-                Location *most_cons = *(g.begin());
+                Location *most_cons = g[0];
 
-                for (const auto &node : g) {
+                for (size_t i = 0; i < g.size(); i++)
+                {
                         bool add = false;
 
-                        if (vec_find(ignore, node) == false &&
-                                        real_size(node->edges, ignore) < k) {
-                                s.push(node);
-                                ignore.push_back(node);
+                        if (real_size(g[i]->edges, ignore) < k)
+                        {
+                                s.push(g[i]);
+                                iter_swap(g.begin() + i, g.end() - 1);
+                                g.pop_back();
+                                ignore.push_back(g[i]);
                                 break;
-                        } else if (real_size(node->edges, ignore) >
-                                        real_size(most_cons->edges, ignore)) {
-                                most_cons = node;
+                        }
+                        else if (real_size(g[i]->edges, ignore) >
+                                        real_size(most_cons->edges, ignore))
+                        {
+                                most_cons = g[i];
                         }
                 }
 
                 if (init_size == s.size()) {
                         ignore.push_back(most_cons);
+                        spilled.push_back(most_cons);
                 }
         }
 
@@ -297,7 +304,6 @@ void CodeGenerator::color()
                         }
                 }
 
-                /* cerr << "Allocating " << *(available.begin()) << endl; */
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }
