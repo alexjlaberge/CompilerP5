@@ -104,7 +104,6 @@ Store::Store(Location *d, Location *s, int off)
   {
     sprintf(printed, "*(%s) = %s", dst->GetName(), src->GetName());
   }
-  inSet.Append(dst);
   killSet.Append(dst);
   genSet.Append(src);
 }
