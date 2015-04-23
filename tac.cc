@@ -264,6 +264,10 @@ ACall::ACall(Location *ma, Location *d)
 void ACall::EmitSpecific(Mips *mips) {
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
+                if (inSet.Nth(i) == methodAddr)
+                {
+                        continue;
+                }
                 mips->SpillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
@@ -272,6 +276,10 @@ void ACall::EmitSpecific(Mips *mips) {
 
         for (size_t i = 0; i < inSet.NumElements(); i++)
         {
+                if (inSet.Nth(i) == methodAddr)
+                {
+                        continue;
+                }
                 mips->FillRegister(inSet.Nth(i),
                                 inSet.Nth(i)->GetRegister());
         }
