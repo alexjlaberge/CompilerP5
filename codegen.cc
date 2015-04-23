@@ -214,14 +214,12 @@ void CodeGenerator::printRegs()
   }
 }
 
-void CodeGenerator::constructInterGraph() //Done?
+void CodeGenerator::constructInterGraph()
 {
-	//cout << "FUCK" << endl;
 	for(int i = 0; i < code->NumElements(); i++)
 	{
-		List<Location*> outSet = code->Nth(i)->inSet;
+		List<Location*> outSet = code->Nth(i)->outSet;
 		List<Location*> killSet = code->Nth(i)->killSet;
-		//cout << "INSET SIZE: " << inSet.NumElements() << endl;
 		for(int j = 0; j < outSet.NumElements(); j++)
 		{
 			for(int k = 0; k < killSet.NumElements(); k++)
@@ -229,11 +227,13 @@ void CodeGenerator::constructInterGraph() //Done?
 				if(j != k)
 				{
 					outSet.Nth(j)->edges.Append(killSet.Nth(k));
-					outSet.Nth(j)->edges.Unique();
+                                        killSet.Nth(k)->edges.Append(outSet.Nth(j));
+
+                                        outSet.Nth(j)->edges.Unique();
+                                        killSet.Nth(k)->edges.Unique();
 				}
 			}
 		}
-
 	}
 }
 
