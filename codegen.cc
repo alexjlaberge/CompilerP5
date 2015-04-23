@@ -70,7 +70,7 @@ void CodeGenerator::livelinessAnalysis()
       currInst = code->Nth(i);
       List<Instruction*> edges = currInst->getEdges();
       List<Location*> outSet;
-      List<Location*> inSet;
+      List<Location*> inSet = currInst->inSet;
 
       for(int j = 0; j < edges.NumElements(); j++)
       {

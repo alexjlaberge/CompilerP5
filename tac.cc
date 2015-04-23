@@ -62,6 +62,7 @@ void LoadLabel::EmitSpecific(Mips *mips) {
 
 
 
+#include <iostream>
 Assign::Assign(Location *d, Location *s)
   : dst(d), src(s) {
   Assert(dst != NULL && src != NULL);
@@ -96,9 +97,14 @@ Store::Store(Location *d, Location *s, int off)
   : dst(d), src(s), offset(off) {
   Assert(dst != NULL && src != NULL);
   if (offset)
+  {
+          inSet.Append(dst);
     sprintf(printed, "*(%s + %d) = %s", dst->GetName(), offset, src->GetName());
+  }
   else
+  {
     sprintf(printed, "*(%s) = %s", dst->GetName(), src->GetName());
+  }
   killSet.Append(dst);
   genSet.Append(src);
 }
@@ -165,6 +171,8 @@ void IfZ::EmitSpecific(Mips *mips) {
 }
 
 
+#include <iostream>
+
 
 BeginFunc::BeginFunc() {
   sprintf(printed,"BeginFunc (unassigned)");
@@ -174,7 +182,6 @@ void BeginFunc::SetFrameSize(int numBytesForAllLocalsAndTemps) {
   frameSize = numBytesForAllLocalsAndTemps; 
   sprintf(printed,"BeginFunc %d", frameSize);
 }
-#include <iostream>
 void BeginFunc::EmitSpecific(Mips *mips) {
   mips->EmitBeginFunction(frameSize);
         for (size_t i = 0; i < inSet.NumElements(); i++)
