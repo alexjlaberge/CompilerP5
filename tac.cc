@@ -258,7 +258,10 @@ ACall::ACall(Location *ma, Location *d)
   Assert(methodAddr != NULL);
   sprintf(printed, "%s%sACall %s", dst? dst->GetName(): "", dst?" = ":"",
 	    methodAddr->GetName());
-  killSet.Append(dst);
+  if (dst)
+  {
+          killSet.Append(dst);
+  }
   genSet.Append(methodAddr);
 }
 void ACall::EmitSpecific(Mips *mips) {
