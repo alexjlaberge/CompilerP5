@@ -49,6 +49,9 @@ class CodeGenerator {
     void livelinessAnalysis();
     void constructInterGraph();
     void color();
+    void printSets();
+    void printRegs();
+
     
          // Assigns a new unique label name and returns it. Does not
          // generate any Tac instructions (see GenLabel below if needed)

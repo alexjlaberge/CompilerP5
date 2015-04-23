@@ -65,13 +65,13 @@ void CodeGenerator::livelinessAnalysis()
   while(changed)
   {
     changed = false;
-    for(int i = code->NumElements()-1; i >= 0; i--)
+    for(int i = 0; i < code->NumElements(); i++)
     {
       currInst = code->Nth(i);
       List<Instruction*> edges = currInst->getEdges();
       List<Location*> outSet;
-      List<Location*> inSet = currInst->inSet;
-
+      List<Location*> inSet;
+      List<Location*> old_IN = currInst->inSet;
       for(int j = 0; j < edges.NumElements(); j++)
       {
         Instruction* currEdge = edges.Nth(j);
@@ -79,23 +79,13 @@ void CodeGenerator::livelinessAnalysis()
         for(int k = 0; k < edgeInSet.NumElements(); k++)
         {
           Location* currElem = edgeInSet.Nth(k);
-          bool foundElem = false;
-          for(int l = 0; l < outSet.NumElements(); l++)
-          {
-            if(outSet.Nth(l) == currElem)
-            {
-              foundElem = true;
-            }
-          }
-          if(!foundElem)
-          {
-            outSet.Append(currElem);
-          }
+          outSet.Append(currElem);
+          outSet.Unique();
         }
         List<Location*> genSet = currInst->genSet;
         List<Location*> killSet = currInst->killSet;
+        //OUT(X) = Union(IN(Y))
         currInst->outSet = outSet;
-        List<Location*> old_IN = currInst->inSet;
         for(int j = 0; j < genSet.NumElements(); j++)
         {
         	inSet.Append(genSet.Nth(j));
@@ -120,24 +110,32 @@ void CodeGenerator::livelinessAnalysis()
         for(int j = 0; j < tmpList.NumElements(); j++)
         {
         	Location* currElem = tmpList.Nth(j);
-          	bool foundElem = false;
-          	for(int k = 0; k < inSet.NumElements(); k++)
-          	{
-            	if(inSet.Nth(k) == currElem)
-            	{
-              		foundElem = true;
-            	}
-          	}
-          	if(!foundElem)
-          	{
-            	inSet.Append(currElem);
-          	}
+          inSet.Append(currElem);
+          inSet.Unique();
         }
+        inSet.Unique();
+        outSet.Unique();
+        old_IN.Unique();
         currInst->outSet = outSet;
         currInst->inSet = inSet;
         /*if(inSet.NumElements() != old_IN.NumElements())
-        	changed = true;
-        else
+        {	
+          changed = true;
+          cerr << "diffnum " << currInst->PrintName() << endl;
+          for(int j = 0; j < inSet.NumElements(); j++)
+          {
+            cerr << "INSET: ";
+            cerr << inSet.Nth(j)->GetName() << endl;
+          }
+        for(int j = 0; j < old_IN.NumElements(); j++)
+        {
+          cerr << "OLDINSET: ";
+          cerr << old_IN.Nth(j)->GetName() << endl;
+        }
+
+        }*/
+        //else
+        //{
         	for(int j = 0; j < inSet.NumElements(); j++)
         	{
         		Location* currElem = inSet.Nth(j);
@@ -152,12 +150,26 @@ void CodeGenerator::livelinessAnalysis()
 	          	if(!foundElem)
 	          	{
 	            	changed = true;
-	            	break;
+                //cerr << currInst->PrintName() << endl;
 	          	}
-        	}*/
+        	}
+        //}
       }
     }
-    for(int i = 0; i < code->NumElements(); i++)
+    //old_IN = IN(X);
+    //OUT(X) = Union(IN(Y)) for all successors Y of X
+    //IN(X) = GEN(X) + (OUT(X) - KILL(X))
+
+
+    
+  }
+
+}
+
+void CodeGenerator::printSets()
+{
+  Instruction* currInst;
+  for(int i = 0; i < code->NumElements(); i++)
     {
         currInst = code->Nth(i);
         List<Location*> inSet = currInst->inSet;
@@ -188,14 +200,18 @@ void CodeGenerator::livelinessAnalysis()
         }
         cerr << endl;
     }
-    //old_IN = IN(X);
-    //OUT(X) = Union(IN(Y)) for all successors Y of X
-    //IN(X) = GEN(X) + (OUT(X) - KILL(X))
+}
 
-
-    
+void CodeGenerator::printRegs()
+{
+  for(int i = 0; i < locs.size(); i++)
+  {
+    Mips mips;
+    if(locs[i]->GetRegister())
+      cerr << locs[i]->GetName() << " " << mips.regs[locs[i]->GetRegister()].name << endl;
+    else 
+      cerr << "Poop" << endl;
   }
-
 }
 
 void CodeGenerator::constructInterGraph() //Done?
@@ -377,14 +393,6 @@ void CodeGenerator::color()
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }
-        for(int i = 0; i < locs.size(); i++)
-    {
-      Mips mips;
-      if(locs[i]->GetRegister())
-        cerr << locs[i]->GetName() << " " << mips.regs[locs[i]->GetRegister()].name << endl;
-      else 
-        cerr << "Poop" << endl;
-    }
 }
 
 
