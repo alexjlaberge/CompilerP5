@@ -98,13 +98,13 @@ Store::Store(Location *d, Location *s, int off)
   Assert(dst != NULL && src != NULL);
   if (offset)
   {
-          inSet.Append(dst);
     sprintf(printed, "*(%s + %d) = %s", dst->GetName(), offset, src->GetName());
   }
   else
   {
     sprintf(printed, "*(%s) = %s", dst->GetName(), src->GetName());
   }
+  inSet.Append(dst);
   killSet.Append(dst);
   genSet.Append(src);
 }
