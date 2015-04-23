@@ -219,51 +219,17 @@ void CodeGenerator::constructInterGraph() //Done?
 	//cout << "FUCK" << endl;
 	for(int i = 0; i < code->NumElements(); i++)
 	{
-		List<Location*> inSet = code->Nth(i)->inSet;
+		List<Location*> outSet = code->Nth(i)->inSet;
+		List<Location*> killSet = code->Nth(i)->killSet;
 		//cout << "INSET SIZE: " << inSet.NumElements() << endl;
-		for(int j = 0; j < inSet.NumElements(); j++)
-		{
-			for(int k = 0; k < inSet.NumElements(); k++)
-			{
-				if(j != k)
-				{
-					bool found = false;
-					for(int l = 0; l < inSet.Nth(j)->edges.NumElements(); l++)
-					{
-						if(inSet.Nth(j)->edges.Nth(l) == inSet.Nth(k))
-						{
-							found = true;
-						}
-					}
-					if(!found)
-					{
-						//cout << "DICKS1"<<endl;
-						inSet.Nth(j)->edges.Append(inSet.Nth(k));
-					}
-				}
-			}
-		}
-		List<Location*> outSet = code->Nth(i)->outSet;
-		//cout << "OUTSET SIZE: " << outSet.NumElements() << endl;
 		for(int j = 0; j < outSet.NumElements(); j++)
 		{
-			for(int k = 0; k < outSet.NumElements(); k++)
+			for(int k = 0; k < killSet.NumElements(); k++)
 			{
 				if(j != k)
 				{
-					bool found = false;
-					for(int l = 0; l < outSet.Nth(j)->edges.NumElements(); l++)
-					{
-						if(outSet.Nth(j)->edges.Nth(l) == outSet.Nth(k))
-						{
-							found = true;
-						}
-					}
-					if(!found)
-					{
-						//cout << "DICKS2" << endl;
-						outSet.Nth(j)->edges.Append(outSet.Nth(k));
-					}
+					outSet.Nth(j)->edges.Append(killSet.Nth(k));
+					outSet.Nth(j)->edges.Unique();
 				}
 			}
 		}
