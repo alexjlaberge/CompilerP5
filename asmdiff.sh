@@ -2,7 +2,7 @@
 
 CURRENT_OUTPUT="/tmp/eecs483.out"
 
-make
+make || exit 1
 
 if [ ! -z ${1} ]
 then
