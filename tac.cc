@@ -234,7 +234,8 @@ void PopParams::EmitSpecific(Mips *mips) {
 LCall::LCall(const char *l, Location *d)
   :  label(strdup(l)), dst(d) {
   sprintf(printed, "%s%sLCall %s", dst? dst->GetName(): "", dst?" = ":"", label);
-  killSet.Append(dst);
+  if(dst)
+    killSet.Append(dst);
 }
 void LCall::EmitSpecific(Mips *mips) {
         for (size_t i = 0; i < inSet.NumElements(); i++)

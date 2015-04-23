@@ -135,28 +135,6 @@ void CodeGenerator::livelinessAnalysis()
         }
         currInst->outSet = outSet;
         currInst->inSet = inSet;
-        //cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
-        //for(int j = 0; j < inSet.NumElements(); j++)
-        //{
-        //	cerr << "INSET: ";
-        //	cerr << inSet.Nth(j)->GetName() << endl;
-        //}
-        //for(int j = 0; j < outSet.NumElements(); j++)
-        //{
-        //	cerr << "OUTSET: ";
-        //	cerr << outSet.Nth(j)->GetName() << endl;
-        //}
-        //for(int j = 0; j < killSet.NumElements(); j++)
-        //{
-        //	cerr << "KILLSET: ";
-        //	cerr << killSet.Nth(j)->GetName() << endl;
-        //}
-        //for(int j = 0; j < genSet.NumElements(); j++)
-        //{
-        //	cerr << "GENSET: ";
-        //	cerr << genSet.Nth(j)->GetName() << endl;
-        //}
-        //cerr << endl;
         /*if(inSet.NumElements() != old_IN.NumElements())
         	changed = true;
         else
@@ -179,7 +157,37 @@ void CodeGenerator::livelinessAnalysis()
         	}*/
       }
     }
-
+    for(int i = 0; i < code->NumElements(); i++)
+    {
+        currInst = code->Nth(i);
+        List<Location*> inSet = currInst->inSet;
+        List<Location*> genSet = currInst->genSet;
+        List<Location*> outSet = currInst->outSet;
+        List<Location*> killSet = currInst->killSet;
+        cerr << "INSTRUCTION: " << currInst->PrintName() << endl;
+        for(int j = 0; j < inSet.NumElements(); j++)
+        {
+          cerr << "INSET: ";
+          cerr << inSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < outSet.NumElements(); j++)
+        {
+          cerr << "OUTSET: ";
+          cerr << outSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < killSet.NumElements(); j++)
+        {
+          cerr << "KILLSET: ";
+          if(killSet.Nth(j)->GetName())
+          cerr << killSet.Nth(j)->GetName() << endl;
+        }
+        for(int j = 0; j < genSet.NumElements(); j++)
+        {
+          cerr << "GENSET: ";
+          cerr << genSet.Nth(j)->GetName() << endl;
+        }
+        cerr << endl;
+    }
     //old_IN = IN(X);
     //OUT(X) = Union(IN(Y)) for all successors Y of X
     //IN(X) = GEN(X) + (OUT(X) - KILL(X))
@@ -369,6 +377,14 @@ void CodeGenerator::color()
                 s.top()->SetRegister(*(available.begin()));
                 s.pop();
         }
+        for(int i = 0; i < locs.size(); i++)
+    {
+      Mips mips;
+      if(locs[i]->GetRegister())
+        cerr << locs[i]->GetName() << " " << mips.regs[locs[i]->GetRegister()].name << endl;
+      else 
+        cerr << "Poop" << endl;
+    }
 }
 
 
