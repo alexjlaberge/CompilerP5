@@ -69,25 +69,11 @@ void CodeGenerator::livelinessAnalysis()
                 List<Location*> in;
                 List<Instruction*> parents = code->Nth(i)->getEdges();
 
-                Goto *tmp = dynamic_cast<Goto*>(code->Nth(i));
-
                 /* in = gen + out - kill */
                 in = code->Nth(i)->genSet;
-                if (tmp)
-                {
-                        cerr << tmp->GetLabel() << " has " <<
-                                in.NumElements() <<
-                                " and will add " <<
-                                code->Nth(i)->outSet.NumElements() <<
-                                endl;
-                }
 
                 for (size_t j = 0; j < code->Nth(i)->outSet.NumElements(); j++)
                 {
-                        if (tmp)
-                        {
-                                cerr << "  appending " << code->Nth(i)->outSet.Nth(j) << endl;
-                        }
                         in.Append(code->Nth(i)->outSet.Nth(j));
                 }
 
@@ -110,16 +96,6 @@ void CodeGenerator::livelinessAnalysis()
                 {
                         for (size_t loc = 0; loc < in.NumElements(); loc++)
                         {
-                                if (tmp)
-                                {
-                                        cerr <<
-                                                "Propogating " <<
-                                                in.Nth(loc)->GetName() <<
-                                                " to " <<
-                                                parents.Nth(j)->PrintName() <<
-                                                endl;
-                                }
-
                                 parents.Nth(j)->outSet.Append(in.Nth(loc));
                         }
 
