@@ -104,7 +104,7 @@ Store::Store(Location *d, Location *s, int off)
   {
     sprintf(printed, "*(%s) = %s", dst->GetName(), src->GetName());
   }
-  killSet.Append(dst);
+  genSet.Append(dst);
   genSet.Append(src);
 }
 void Store::EmitSpecific(Mips *mips) {
