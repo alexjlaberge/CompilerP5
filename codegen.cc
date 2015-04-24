@@ -87,6 +87,7 @@ void CodeGenerator::livelinessAnalysis()
                         }
                 }
 
+                in.Unique();
                 code->Nth(i)->inSet = in;
 
                 for (size_t j = 0; j < parents.NumElements(); j++)
@@ -162,7 +163,6 @@ void CodeGenerator::constructInterGraph()
                                 outSet.Nth(j)->edges.Append(killSet.Nth(k));
                                 killSet.Nth(k)->edges.Append(outSet.Nth(j));
 
-                                outSet.Nth(j)->edges.Unique();
                                 killSet.Nth(k)->edges.Unique();
 			}
 
@@ -173,10 +173,11 @@ void CodeGenerator::constructInterGraph()
                                         continue;
                                 }
                                 outSet.Nth(j)->edges.Append(outSet.Nth(k));
-                                outSet.Nth(j)->edges.Unique();
                         }
-		}
-	}
+
+                        outSet.Nth(j)->edges.Unique();
+                }
+        }
 }
 
 class Comp
